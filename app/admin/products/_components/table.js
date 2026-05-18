@@ -1,12 +1,35 @@
 import {
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { prisma } from "@/lib/prisma";
+import { CheckCircle2, MoreVertical, XCircle } from "lucide-react";
 
-export default function ProductTable() {
+export default async function ProductTable() {
+  const products = prisma.product.findMany({
+    select: {
+      id: true,
+      name: true,
+      priceInRupees: true,
+      isAvailableForPurchase: true,
+      _count: {
+        select: {
+          orders: true,
+        },
+      },
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+  if ((await products).length === 0) {
+    return <p>No products found.</p>;
+  }
+  console.log(products);
   return (
     <Table>
       <TableHeader>
@@ -22,7 +45,33 @@ export default function ProductTable() {
           </TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody></TableBody>
+      <TableBody>
+        {(await products).map((product) => (
+          <TableRow key={product.id}>
+            <TableCell>
+              {product.isAvailableForPurchase ? (
+                <>
+                  <div className="sr-only">Available for Purchase</div>
+                  <CheckCircle2 />
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <div className="sr-only">Unavailable for Purchase</div>
+                  <XCircle />
+                </>
+              )}
+            </TableCell>
+            <TableCell>{product.name}</TableCell>
+            <TableCell>₹{product.priceInRupees.toFixed(2)}</TableCell>
+            <TableCell>{product._count.orders}</TableCell>
+            <TableCell className="w-0">
+              <MoreVertical />
+              <span className="sr-only">Actions</span>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
     </Table>
   );
 }
