@@ -9,7 +9,7 @@ export function Nav({ children }) {
     <div className="p-3 px-5 flex shadow-md bg-amber-50 justify-between items-center">
       <div className="flex gap-3 items-center">
         <Image src={"/next.svg"} alt="" width={30} height={30} />
-        <h2 className="font-bold text-2xl">Ai Video</h2>
+        <h2 className="font-bold text-2xl">Next Shop</h2>
       </div>
       <div>{children}</div>
       <div className="flex items-center gap-3">

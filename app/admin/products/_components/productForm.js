@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,11 +12,15 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import React, { useActionState } from "react";
-import productAction from "../../_actions/productAction";
+import productAction, { UpdateProduct } from "../../_actions/productAction";
 import { useFormStatus } from "react-dom";
+import Image from "next/image";
 
-export default function ProductForm() {
-  const [error, action] = useActionState(productAction, {});
+export default function ProductForm({ product }) {
+  const [error, action] = useActionState(
+    product == null ? productAction : UpdateProduct.bind(null, product.id),
+    {},
+  );
   const items = [
     { label: "Cars", value: "cars" },
     { label: "Bikes", value: "bikes" },
@@ -26,7 +31,14 @@ export default function ProductForm() {
     <form className="space-y-8" action={action}>
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
-        <Input id="name" type="text" placeholder="Product Name" name="name" />
+        <Input
+          id="name"
+          type="text"
+          placeholder="Product Name"
+          name="name"
+          defaultValue={product?.name}
+          required
+        />
         {error?.name && (
           <div className="text-destructive">{error?.name[0]}</div>
         )}
@@ -38,6 +50,8 @@ export default function ProductForm() {
           type="number"
           placeholder="Product Price"
           name="price"
+          defaultValue={product?.priceInRupees}
+          required
         />
         {error?.price && (
           <div className="text-destructive">{error?.price[0]}</div>
@@ -45,7 +59,12 @@ export default function ProductForm() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="category">Category</Label>
-        <Select items={items} name="category">
+        <Select
+          items={items}
+          name="category"
+          defaultValue={product?.category}
+          required
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
@@ -69,6 +88,7 @@ export default function ProductForm() {
           id="description"
           placeholder="Product Description"
           name="description"
+          defaultValue={product?.description}
         />
         {error?.description && (
           <div className="text-destructive">{error?.description[0]}</div>
@@ -76,14 +96,27 @@ export default function ProductForm() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="file">File</Label>
-        <Input id="file" type="file" name="file" />
+        <Input id="file" type="file" name="file" required={product == null} />
+        {product != null && (
+          <div className="text-muted-foreground">
+            Current File: {product?.filePath}
+          </div>
+        )}
         {error?.file && (
           <div className="text-destructive">{error?.file[0]}</div>
         )}
       </div>
       <div className="space-y-2">
         <Label htmlFor="image">Image</Label>
-        <Input id="image" type="file" name="image" />
+        <Input id="image" type="file" name="image" required={product == null} />
+        {product != null && (
+          <Image
+            src={product?.imagePath}
+            alt="productName"
+            width={100}
+            height={100}
+          />
+        )}
         {error?.image && (
           <div className="text-destructive">{error?.image[0]}</div>
         )}

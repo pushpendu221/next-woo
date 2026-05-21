@@ -2,6 +2,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -15,6 +16,8 @@ import {
 import { prisma } from "@/lib/prisma";
 import { CheckCircle2, MoreVertical, XCircle } from "lucide-react";
 import Link from "next/link";
+import { ActiveToggleDropdown, DeleteDropdownItem } from "./productAction";
+import { De } from "zod/v4/locales";
 
 export default async function ProductTable() {
   const products = prisma.product.findMany({
@@ -65,7 +68,7 @@ export default async function ProductTable() {
                 <>
                   {" "}
                   <div className="sr-only">Unavailable for Purchase</div>
-                  <XCircle />
+                  <XCircle className="stroke-destructive" />
                 </>
               )}
             </TableCell>
@@ -89,11 +92,15 @@ export default async function ProductTable() {
                       Edit
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href={`/admin/products/${product.id}/delete`}>
-                      Delete
-                    </Link>
-                  </DropdownMenuItem>
+                  <ActiveToggleDropdown
+                    id={product.id}
+                    isAvailableForPurchase={product.isAvailableForPurchase}
+                  />
+                  <DropdownMenuSeparator />
+                  <DeleteDropdownItem
+                    id={product.id}
+                    disabled={product._count.orders > 0}
+                  />
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>
