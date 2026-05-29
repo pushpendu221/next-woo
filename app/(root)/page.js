@@ -2,10 +2,9 @@ import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import ProductCard, {
-  ProductCardSkeleton,
-} from "./admin/_components/productCard";
+
 import { Suspense } from "react";
+import ProductCard, { ProductCardSkeleton } from "../admin/_components/productCard";
 
 function getMostPopularProducts() {
   return prisma.product.findMany({
