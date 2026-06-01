@@ -2,17 +2,21 @@ import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-
+import { cacheTag } from "next/cache";
 import { Suspense } from "react";
 import ProductCard, { ProductCardSkeleton } from "../admin/_components/productCard";
 
-function getMostPopularProducts() {
+async function getMostPopularProducts() {
+  "use cache";
+  cacheTag("products");
   return prisma.product.findMany({
     where: { isAvailableForPurchase: true },
     orderBy: { orders: { _count: "desc" } },
   });
 }
-function getMostNewestProducts() {
+async function getMostNewestProducts() {
+  "use cache";
+  cacheTag("products");
   return prisma.product.findMany({
     where: { isAvailableForPurchase: true },
     orderBy: { createdAt: "desc" },
@@ -26,7 +30,7 @@ export default function Home() {
       <ProductActionGrid
         title="Most Popular Products"
         productFetcher={getMostPopularProducts}
-      />{" "}
+      />
       <ProductActionGrid
         title="Most Newest Products"
         productFetcher={getMostNewestProducts}

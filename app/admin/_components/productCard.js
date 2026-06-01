@@ -21,7 +21,7 @@ export default function ProductCard({
   return (
     <Card className="flex flex-col overflow-hidden">
       <div className="relative w-full h-auto aspect-video">
-        <Image src={imagePath} fill alt={title} />
+        <Image src={imagePath}  alt={title || "productImage"} fill/>
       </div>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
